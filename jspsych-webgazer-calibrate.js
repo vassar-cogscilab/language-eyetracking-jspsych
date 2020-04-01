@@ -47,8 +47,8 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
     var update_gp = function(){
       var gp = display_element.querySelector('#gaze-point');
       if(curr_gp.x !== null){
-        gp.style.left = curr_gp.x;
-        gp.style.top = curr_gp.y;
+        gp.style.left = curr_gp.x +"px";
+        gp.style.top = curr_gp.y+"px";
       }
 
       requestAnimationFrame(update_gp);
