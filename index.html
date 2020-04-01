@@ -2,7 +2,7 @@
 <html>
   <head>
     <script src="jspsych-6.1.0/jspsych.js"></script>
-    <script src="jspsych-6.1.0/plugins/jspsych-audio-keyboard-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-webgazer-calibrate.js"></script>
     <script src="js/webgazer.js"></script>
     <link rel="stylesheet" href="jspsych-6.1.0/css/jspsych.css">
   </head>
@@ -10,15 +10,8 @@
   <script>
     var timeline = [];
 
-    webgazer.setGazeListener(function(data, elapsedTime){
-      if(data == null){
-        return;
-      }
-      var x = data.x;
-      var y = data.y;
-      console.log("x: "+x+", y: "+y+", t: "+elapsedTime);
-    })
-
-    webgazer.begin();
+    timeline.push({
+      type: 'webgazer-calibrate'
+    });
   </script>
 </html>
