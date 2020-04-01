@@ -35,8 +35,10 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
       var x = data.x;
       var y = data.y;
 
-      display_element.querySelector('#gaze-point').style.top = y;
-      display_element.querySelector('#gaze-point').style.left = x;
+      var gp = display_element.querySelector('#gaze-point');
+
+      gp.style.top = y;
+      gp.style.left = x;
 
       //console.log("x: "+x+", y: "+y+", t: "+elapsedTime);
     });
