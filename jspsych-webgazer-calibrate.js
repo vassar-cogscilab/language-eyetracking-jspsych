@@ -20,7 +20,7 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
       stimulus: {
         type: jsPsych.plugins.parameterType.IMAGE,
         pretty_name: 'Stimulus',
-        default: undefined,
+        default: "p",
         description: 'The image to be displayed'
       }
     }
