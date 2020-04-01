@@ -28,6 +28,8 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
+    var curr_gp = {x: null, y: null}
+
     webgazer.setGazeListener(function(data, elapsedTime){
       if(data == null){
         return;
@@ -35,15 +37,21 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
       var x = data.x;
       var y = data.y;
 
-      var gp = display_element.querySelector('#gaze-point');
-
-      gp.style.top = y;
-      gp.style.left = x;
+      curr_gp = {x:x, y:y}
 
       //console.log("x: "+x+", y: "+y+", t: "+elapsedTime);
     });
 
     webgazer.begin();
+
+    var update_gp = function(){
+      var gp = display_element.querySelector('#gaze-point');
+
+      gp.style.left = x;
+      gp.style.top = y;
+
+      requestAnimationFrame(update_gp);
+    }
 
     var html = "<div id='webgazer-calibrate-bg' style='position: relative; width:100%; height:100%;'>"
     html+="<p>Calibrartion start.</p>"
@@ -51,6 +59,8 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
     html+="</div>"
 
     display_element.innerHTML = html;
+
+    requestAnimationFrame(update_gp);
 
 
     // function to end trial when it is time
