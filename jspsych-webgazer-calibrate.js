@@ -79,8 +79,6 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
         wg_container.innerHTML = "";
         webgazer.showPredictionPoints(true);
       }
-
-      
     }
 
     requestAnimationFrame(loop);
