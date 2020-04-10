@@ -25,7 +25,7 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
       },
       calibration_points: {
         type: jsPsych.plugins.parameterType.INT,
-        default: [[20,50], [70,50]]
+        default: [[10,50], [10,90], [30,10], [50,10], [50,50], [50,90], [90,10], [90,50], [90,90]]
       }
     }
   }
@@ -64,8 +64,9 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
     // run the main loop through calibration routine /////////
     function loop(){
       if(state == 'video-detect'){
+        show_video_detect_message();
         var score = check_face_score();
-        wg_container.innerHTML = score;
+        wg_container.querySelector('#video-detect-quality-inner').style.width = (score*100) + "%"
         if(score > trial.face_detect_threshold){
           state = "begin-calibrate";
         }
@@ -74,12 +75,27 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
         show_begin_calibrate_message();
       } else if(state == 'calibrate'){
         calibrate();
+      } else if(state == 'calibration-done'){
+        wg_container.innerHTML = "";
+        webgazer.showPredictionPoints(true);
       }
 
       
     }
 
     requestAnimationFrame(loop);
+
+    function show_video_detect_message(){
+      wg_container.innerHTML = "<div style='position: absolute; top: 50%; left: calc(50% - 350px); transform: translateY(-50%); width:700px;'>"+
+        "<p>To start, you need to position your head so that the webcam has a good view of your eyes.</p>"+
+        "<p>Use the video in the upper-left corner as a guide. Center your face in the box.</p>"+
+        "<p>Quality of detection:</p>"+
+        "<div id='video-detect-quality-container' style='width:700px; height: 20px; background-color:#ccc; position: relative;'>"+
+        "<div id='video-detect-quality-inner' style='width:0%; height:20px; background-color: #5c5;'></div>"+
+        "<div id='video-detect-threshold' style='width: 1px; height: 20px; background-color: #f00; position: absolute; top:0; left:"+(trial.face_detect_threshold*100)+"%;'></div>"+
+        "</div>"+
+        "</div>"
+    }
 
     function check_face_score(){
       return webgazer.getTracker().clm.getScore();
@@ -115,7 +131,12 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
         wg_container.querySelector('#calibration-point').style.filter = "brightness("+(100 + clicks*10)+"%)"
         if(clicks >= 5){
           points_completed++;
-          next_calibration_point();
+          if(points_completed < trial.calibration_points.length){
+            next_calibration_point();
+          } else {
+            state = 'calibration-done'
+            requestAnimationFrame(loop);
+          }
         }
       });
 
