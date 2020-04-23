@@ -39,18 +39,6 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
   plugin.trial = function(display_element, trial) {
 
     webgazer.begin();
-    //webgazer.showPredictionPoints(true);
-
-    /*var update_gp = function(){
-      var gp = display_element.querySelector('#gaze-point');
-      var prediction = webgazer.getCurrentPrediction();
-      if(prediction){
-        gp.style.left = prediction.x +"px";
-        gp.style.top = prediction.y+"px";
-      }
-
-      requestAnimationFrame(update_gp);
-    }*/
 
     var html = "<div id='webgazer-calibrate-container' style='position: relative; width:100vw; height:100vh'>"
     html+="</div>"
