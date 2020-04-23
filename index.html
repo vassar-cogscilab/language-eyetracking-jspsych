@@ -23,13 +23,40 @@
       type: 'webgazer-calibrate'
     });
 
-  
-
-    timeline.push({
+    
+    var vw_trial = {
       type: 'webgazer-visual-world',
-      audio: 'mp3/10d1.mp3',
-      image: 'img/Mail10d1BMP_result.png'
-    })
+      audio: jsPsych.timelineVariable('audio'),
+      image: jsPsych.timelineVariable('image')
+    }
+
+    var response_trial = {
+      type: 'html-keyboard-response',
+      stimulus: '<p>Did the audio match the picture?</p>',
+      choices: ["Yes", "No"],
+      data: {
+        audio: jsPsych.timelineVariable('audio'),
+        image: jsPsych.timelineVariable('image')
+      }
+    }
+
+    var vw_procedure = {
+      timeline: [vw_trial, response_trial],
+      timeline_variables: [
+        {audio: 'mp3/1f.mp3', image: 'img/Ducks_1f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/2f.mp3', image: 'img/FamilyDance_2f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/3f.mp3', image: 'img/Surf_3f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/4f.mp3', image: 'img/Hockey_4f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/5f.mp3', image: 'img/Hawaii_5f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/6f.mp3', image: 'img/Hanky_6f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/7f.mp3', image: 'img/Donut_7f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/8f.mp3', image: 'img/Stealing_8f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+        {audio: 'mp3/9f.mp3', image: 'img/Jello_9f_BMP_result.png', trial_type: 'filler', audio_image_match: 'Yes'},
+
+      ]
+    }
+
+    
 
     jsPsych.init({
       timeline: timeline,
