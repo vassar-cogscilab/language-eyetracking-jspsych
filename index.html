@@ -3,6 +3,8 @@
   <head>
     <script src="jspsych-6.1.0/jspsych.js"></script>
     <script src="jspsych-webgazer-calibrate.js"></script>
+    <script src="jspsych-webgazer-visual-world.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
     
     <link rel="stylesheet" href="jspsych-6.1.0/css/jspsych.css">
   </head>
@@ -11,12 +13,27 @@
   <script>
     var timeline = [];
 
-    timeline.push({
+    /*timeline.push({
       type: 'webgazer-calibrate'
-    });
+    });*/
+
+    timeline.push({
+      type: 'html-button-response',
+      stimulus: '',
+      choices: ['Begin']
+    })
+
+    timeline.push({
+      type: 'webgazer-visual-world',
+      audio: 'mp3/10d1.mp3',
+      image: 'img/Mail10d1BMP_result.png'
+    })
 
     jsPsych.init({
-      timeline: timeline
+      timeline: timeline,
+      on_finish: function(){
+        jsPsych.data.displayData('json')
+      }
     })
   </script>
 </html>

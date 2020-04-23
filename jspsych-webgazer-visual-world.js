@@ -10,15 +10,15 @@ jsPsych.plugins["webgazer-visual-world"] = (function() {
 
   var plugin = {};
 
-  jsPsych.pluginAPI.registerPreload('webgazer-visual-world', 'stimulus', 'audio');
+  jsPsych.pluginAPI.registerPreload('webgazer-visual-world', 'audio', 'audio');
 
   plugin.info = {
     name: 'webgazer-visual-world',
     description: '',
     parameters: {
-      stimulus: {
+      audio: {
         type: jsPsych.plugins.parameterType.AUDIO,
-        pretty_name: 'Stimulus',
+        pretty_name: 'Audio Stimulus',
         default: undefined,
         description: 'The audio to be played.'
       },
@@ -58,42 +58,51 @@ jsPsych.plugins["webgazer-visual-world"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    // setup stimulus
+    var gaze_data = [];
+    var audio_start = null;
+
+    // setup eye tracking callback
+    webgazer.setGazeListener(function(data){
+      if(data == null){
+        return;
+      }
+
+      gaze_data.push({
+        x: data.x - document.querySelector('#visual-world-target').offsetLeft,
+        y: data.y - document.querySelector('#visual-world-target').offsetTop,
+        t: performance.now() - audio_start
+      })
+    })
+
+    // setup audio stimulus
     var context = jsPsych.pluginAPI.audioContext();
     if(context !== null){
       var source = context.createBufferSource();
-      source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
+      source.buffer = jsPsych.pluginAPI.getAudioBuffer(trial.audio);
       source.connect(context.destination);
     } else {
-      var audio = jsPsych.pluginAPI.getAudioBuffer(trial.stimulus);
+      var audio = jsPsych.pluginAPI.getAudioBuffer(trial.audio);
       audio.currentTime = 0;
     }
 
     // set up end event if trial needs it
-
-    if(trial.trial_ends_after_audio){
-      if(context !== null){
-        source.onended = function() {
-          end_trial();
-        }
-      } else {
-        audio.addEventListener('ended', end_trial);
+    if(context !== null){
+      source.onended = function() {
+        end_trial();
       }
+    } else {
+      audio.addEventListener('ended', end_trial);
     }
-
-    // show prompt if there is one
-    if (trial.prompt !== null) {
-      display_element.innerHTML = trial.prompt;
-    }
-
-    // store response
-    var response = {
-      rt: null,
-      key: null
-    };
+    
+    // show visual scene
+    display_element.innerHTML = "<img id='visual-world-target' src='"+trial.image+"'>";
+    
 
     // function to end trial when it is time
     function end_trial() {
+
+      webgazer.pause();
+      webgazer.clearGazeListener();
 
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
@@ -111,14 +120,8 @@ jsPsych.plugins["webgazer-visual-world"] = (function() {
       // kill keyboard listeners
       jsPsych.pluginAPI.cancelAllKeyboardResponses();
 
-      // gather the data to store for the trial
-      if(context !== null && response.rt !== null){
-        response.rt = Math.round(response.rt * 1000);
-      }
       var trial_data = {
-        "rt": response.rt,
-        "stimulus": trial.stimulus,
-        "key_press": response.key
+        "gaze_data": JSON.stringify(gaze_data)
       };
 
       // clear the display
@@ -128,19 +131,6 @@ jsPsych.plugins["webgazer-visual-world"] = (function() {
       jsPsych.finishTrial(trial_data);
     };
 
-    // function to handle responses by the subject
-    var after_response = function(info) {
-
-      // only record the first response
-      if (response.key == null) {
-        response = info;
-      }
-
-      if (trial.response_ends_trial) {
-        end_trial();
-      }
-    };
-
     // start audio
     if(context !== null){
       startTime = context.currentTime;
@@ -148,34 +138,9 @@ jsPsych.plugins["webgazer-visual-world"] = (function() {
     } else {
       audio.play();
     }
-
-    // start the response listener
-    if(context !== null) {
-      var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
-        callback_function: after_response,
-        valid_responses: trial.choices,
-        rt_method: 'audio',
-        persist: false,
-        allow_held_key: false,
-        audio_context: context,
-        audio_context_start_time: startTime
-      });
-    } else {
-      var keyboardListener = jsPsych.pluginAPI.getKeyboardResponse({
-        callback_function: after_response,
-        valid_responses: trial.choices,
-        rt_method: 'performance',
-        persist: false,
-        allow_held_key: false
-      });
-    }
-
-    // end trial if time limit is set
-    if (trial.trial_duration !== null) {
-      jsPsych.pluginAPI.setTimeout(function() {
-        end_trial();
-      }, trial.trial_duration);
-    }
+    audio_start = performance.now();
+    
+    webgazer.resume();
 
   };
 

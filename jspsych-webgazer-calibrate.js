@@ -66,6 +66,7 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
       } else if(state == 'calibration-done'){
         wg_container.innerHTML = "";
         webgazer.showPredictionPoints(true);
+        setTimeout(end_trial, 2000);
       }
     }
 
@@ -134,20 +135,15 @@ jsPsych.plugins["webgazer-calibrate"] = (function() {
 
     // function to end trial when it is time
     var end_trial = function() {
+      webgazer.pause();
+      webgazer.showPredictionPoints(false);
 
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
 
-      // kill keyboard listeners
-      if (typeof keyboardListener !== 'undefined') {
-        jsPsych.pluginAPI.cancelKeyboardResponse(keyboardListener);
-      }
-
       // gather the data to store for the trial
       var trial_data = {
-        "rt": response.rt,
-        "stimulus": trial.stimulus,
-        "key_press": response.key
+
       };
 
       // clear the display
