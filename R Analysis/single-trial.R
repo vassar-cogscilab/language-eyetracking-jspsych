@@ -20,3 +20,5 @@ ggplot(eye.data, aes(x=x, y=y))+
   theme(panel.grid = element_blank())
 
 anim_save("test.gif")
+
+eye.data %>% mutate(diff = t - lag(t))
