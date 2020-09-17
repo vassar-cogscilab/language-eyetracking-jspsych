@@ -5,6 +5,7 @@
     <script src="jspsych-webgazer-calibrate.js"></script>
     <script src="jspsych-webgazer-visual-world.js"></script>
     <script src="jspsych-6.1.0/plugins/jspsych-html-button-response.js"></script>
+    <script src="jspsych-6.1.0/plugins/jspsych-html-keyboard-response.js"></script>
     
     <link rel="stylesheet" href="jspsych-6.1.0/css/jspsych.css">
   </head>
@@ -31,7 +32,7 @@
     }
 
     var response_trial = {
-      type: 'html-keyboard-response',
+      type: 'html-button-response',
       stimulus: '<p>Did the audio match the picture?</p>',
       choices: ["Yes", "No"],
       data: {
@@ -56,10 +57,21 @@
       ]
     }
 
-    
+    timeline.push(vw_procedure);
 
     jsPsych.init({
       timeline: timeline,
+      preload_audio: [
+        'mp3/1f.mp3',
+        'mp3/2f.mp3',
+        'mp3/3f.mp3',
+        'mp3/4f.mp3',
+        'mp3/5f.mp3',
+        'mp3/6f.mp3',
+        'mp3/7f.mp3',
+        'mp3/8f.mp3',
+        'mp3/9f.mp3'
+      ],
       on_finish: function(){
         jsPsych.data.displayData('json')
       }
